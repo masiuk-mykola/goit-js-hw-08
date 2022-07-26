@@ -1,3 +1,6 @@
+// var throttle = require('lodash.throttle');
+import throttle from 'lodash.throttle';
+
 const refs = {
   form: document.querySelector('form'),
   input: document.querySelector('input'),
@@ -7,7 +10,7 @@ const LOCALSTORAGE_KEY = 'feedback-form-state';
 
 updateOutput();
 
-refs.form.addEventListener('input', saveData);
+refs.form.addEventListener('input', throttle(saveData, 500));
 refs.form.addEventListener('submit', submitData);
 
 function saveData(event) {
@@ -24,7 +27,7 @@ function submitData(event) {
   const saveddata = localStorage.getItem(LOCALSTORAGE_KEY);
   const parseddata = JSON.parse(saveddata);
   console.log(parseddata);
-  localStorage.clear();
+  localStorage.removeItem(LOCALSTORAGE_KEY);
   event.currentTarget.reset();
 }
 
