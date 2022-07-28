@@ -20,7 +20,8 @@ function submitForm(evt) {
 }
 
 function saveDataToLocStor(evt) {
-  let userData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
+  const data = localStorage.getItem(LOCALSTORAGE_KEY);
+  const userData = data ? JSON.parse(data) : {};
   userData[evt.target.name] = evt.target.value;
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(userData));
 }
