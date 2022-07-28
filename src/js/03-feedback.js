@@ -1,39 +1,33 @@
 import throttle from 'lodash.throttle';
 
-const refs = {
-  form: document.querySelector('form'),
-  input: document.querySelector('input'),
-  textarea: document.querySelector('textarea'),
+refs = {
+  form: document.querySelector('.feedback-form'),
+  email: document.querySelector('input'),
+  message: document.querySelector('textarea'),
 };
-const LOCALSTORAGE_KEY = 'feedback-form-state';
+LOCALSTORAGE_KEY = 'feedback-form-state';
 
-const formData = {};
-updateForm();
+refreshPage();
 
-refs.form.addEventListener('input', throttle(saveData, 500));
-refs.form.addEventListener('submit', submitData);
+refs.form.addEventListener('input', throttle(saveDataToLocStor, 500));
+refs.form.addEventListener('submit', submitForm);
 
-function saveData(event) {
-  formData[event.target.name] = event.target.value;
-  const stringifiedData = JSON.stringify(formData);
-  localStorage.setItem(LOCALSTORAGE_KEY, stringifiedData);
-}
-
-function submitData(event) {
-  event.preventDefault();
-  const saveddata = localStorage.getItem(LOCALSTORAGE_KEY);
-  const parseddata = JSON.parse(saveddata);
-  console.log(parseddata);
+function submitForm(evt) {
+  evt.preventDefault();
+  evt.currentTarget.reset();
+  console.log(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)));
   localStorage.removeItem(LOCALSTORAGE_KEY);
-  event.currentTarget.reset();
 }
 
-function updateForm() {
-  const saveddata = localStorage.getItem(LOCALSTORAGE_KEY);
-  const parseddata = JSON.parse(saveddata);
+function saveDataToLocStor(evt) {
+  let userData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || {};
+  userData[evt.target.name] = evt.target.value;
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(userData));
+}
 
-  if (parseddata) {
-    refs.input.value = parseddata.email;
-    refs.textarea.value = parseddata.message;
-  }
+function refreshPage() {
+  const parsedData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
+  if (!parsedData) return;
+  refs.email.value = parsedData.email || '';
+  refs.message.value = parsedData.message || '';
 }
